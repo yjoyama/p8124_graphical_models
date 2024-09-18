@@ -63,7 +63,7 @@ dseparated(gb, c("X2", "X4"), "X7", c("X6", "X9", "X10"))
 ```
 
 # Problem 2
-
+We want to know if $X_i$ is d-connected to $X\backslash \{Mb(X_i,\mathcal{G}),X_i\}$ given $Mb(X_i,\mathcal{G})$. By definition of Markov blanket wrt $\mathcal{G}$, $Mb(X_i,\mathcal{G})\equiv Pa(X_i)\cup Ch(X_i)\cup Pa(Ch(X_i))$. Any path from $X_i$ to $X\backslash \{Mb(X_i,\mathcal{G}),X_i\}$ go through $Pa(X_i)$, $Ch(X_i)$ (where there is no $Pa(Ch(X_i))$), or $Ch(X_i)$ and $Pa(Ch(X_i))$. In the first case, $Pa(X_i)$ cannot be a collider and it is in the conditioning set so the path is not active. In the second case, $Ch(X_i)$ cannot be a collider and it is in the conditioning set so the path is not active. In the third case, $Ch(X_i)$ is a collider and it is in the conditioning set so the path is active. However, $Pa(Ch(X_i))$ cannot be a collider and it is in the conditioning set so this path is not active. Therefore, $X_i$ cannot be d-connected to $X\backslash \{Mb(X_i,\mathcal{G}),X_i\}$ and $X_i \perp _dX\backslash \{Mb(X_i,\mathcal{G}),X_i\}|Mb(X_i,\mathcal{G})$ holds. By global Markov property, $X_i \perp _dX\backslash \{Mb(X_i,\mathcal{G}),X_i\}|Mb(X_i,\mathcal{G})\Longrightarrow X_i \indep X\backslash \{Mb(X_i,\mathcal{G}),X_i\}|Mb(X_i,\mathcal{G})$.  
 
 # Problem 3
 Agreements: $D \indep \{A,C\}|B$  
