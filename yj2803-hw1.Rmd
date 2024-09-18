@@ -61,7 +61,9 @@ dseparated(gb, "X2", "X9", c("X4"))
 dseparated(gb, "X7", "X5", c("X3", "X8"))
 dseparated(gb, c("X2", "X4"), "X7", c("X6", "X9", "X10"))
 ```
+
 # Problem 2
+
 
 # Problem 3
 Agreements: $D \indep \{A,C\}|B$  
@@ -93,11 +95,10 @@ g <- dagitty('dag {
     H [pos="5,-1"]
     
     D -> E -> A <- B <- G -> H
-    C -> E
-    E -> F -> G
+    C -> E -> F -> G
     C -> H
     C -> B
-    C -> F
+    C -> F -> H
 }')
 
 # a: path from C to H
@@ -126,8 +127,9 @@ impliedConditionalIndependencies(g, type = "all.pairs")
 ```
 According to the documentation, the default for this function is type = "missing.edge". This returns a list of conditional independencies with minimal testable implication per missing edge while type = "all.pairs" returns all implied conditional independencies between two variables. This is why the first one is shorter than the second one.
 
-(d)
+(d) The summary of the simulated data (N=10000) is shown below.
 ```{r results=T, echo=F}
+set.seed(2024)
 # d: simulate data from this DAG, which associates the DAG with a linear structural equation model
 # path coefficient (-0.7, 0.7), sample size = 10000
 sim <- simulateSEM(
@@ -136,8 +138,22 @@ sim <- simulateSEM(
   b.lower = -0.7,
   b.upper = 0.7,
   N = 10000
-)
+) 
+
+summary(sim)
 ```
+
+Markov blanket for vertex $B$ are:
+```{r results=T, echo=F}
+markovBlanket(g, 'B')
+```
+Let's check the linear regression of $B \sim Mb(B, \mathcal{G})$ + remaining covariates using this simulated data.
+```{r results=T, echo=F}
+# construct a linear model
+lm_b = lm(B ~ A + C + D + E + F + G + H, sim)
+summary(lm_b)
+```
+The coefficients for variables outside of the Markov blanket ($D, F, H$) have p-values greater than 0.05, indicating their independence from $B$. Meanwhile, the coefficients for variables within the Markov blanket have p-values less than 0.05, confirming that the Markov blanket property holds for vertex $B$.
 
 # Code
 ```{r echo=T, results=F, message=F}
@@ -156,11 +172,10 @@ g <- dagitty('dag {
     H [pos="5,-1"]
     
     D -> E -> A <- B <- G -> H
-    C -> E
-    E -> F -> G
+    C -> E -> F -> G
     C -> H
     C -> B
-    C -> F
+    C -> F -> H
 }')
 
 # a: path from C to H
@@ -177,6 +192,7 @@ if(dseparated(g, "E", "G", c("A", "B"))){
 impliedConditionalIndependencies(g)
 impliedConditionalIndependencies(g, type = "all.pairs")
 
+set.seed(2024)
 # d: simulate data from this DAG, which associates the DAG with a linear structural equation model
 # path coefficient (-0.7, 0.7), sample size = 10000
 sim <- simulateSEM(
@@ -186,5 +202,13 @@ sim <- simulateSEM(
   b.upper = 0.7,
   N = 10000
 )
+
+summary(sim)
+
+markovBlanket(g, 'B')
+
+# construct a linear model
+lm_b = lm(B ~ A + C + D + E + F + G + H, sim)
+summary(lm_b)
 ```
 
