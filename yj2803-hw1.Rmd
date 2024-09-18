@@ -1,0 +1,190 @@
+---
+title: "Assignment 1"
+author: "Yuki Joyama (yj2803)"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{amsmath}  # Include amsmath package
+  - \newcommand{\indep}{\perp\!\!\!\perp}  # Define the conditional independence symbol
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, message = F, warning = F)
+
+library(tidyverse)
+library(ggplot2)
+library(dagitty)
+
+# setup plot theme
+theme_set(
+  theme_bw() +
+    theme(legend.position = "top")
+  )
+```
+
+# Problem 1
+(a) $X_2 \indep X_3, X_7, X_8, X_{10}$  
+$X_3 \indep X_2|X_1$  
+$X_4 \indep X_1, X_7, X_8, X_{10}|X_2, X_3$  
+$X_5 \indep X_1, X_2, X_3, X_7, X_8, X_9, X_{10}|X_4$  
+$X_6 \indep X_1, X_2, X_3, X_4, X_7, X_8, X_9, X_{10}|X_5$  
+$X_7 \indep X_1, X_2, X_4, X_5, X_6|X_3$  
+$X_8 \indep X_1, X_2, X_4, X_5, X_6|X_3, X_7$  
+$X_9 \indep X_1, X_2, X_3, X_5, X_6, X_7|X_4, X_8, X_{10}$  
+$X_{10} \indep X_1, X_2, X_3, X_4, X_5, X_6, X_7|X_8$  
+
+(b) $X_2 \perp_dX_9|X_4$: False   
+$X_7 \perp_dX_5|\{X_3, X_8\}$: True  
+$\{X_2, X_4\} \perp_dX_7|\{X_6, X_9, X_{10}\}$: False
+```{r echo=F, results=F}
+gb <- dagitty('dag {
+    X1 [pos="0,0"]
+    X2 [pos="-1,1"]
+    X3 [pos="2,1"]
+    X4 [pos="0,2"]
+    X5 [pos="0,3"]
+    X6 [pos="-1,3"]
+    X7 [pos="3,1"]
+    X8 [pos="2.5,2"]
+    X9 [pos="2.5,3"]
+    X10 [pos="4,2"]
+    
+    X1 -> X2 -> X4 -> X5 -> X6
+    X1 -> X3 -> X4 -> X9
+    X3 -> X7 -> X8 -> X10 -> X9
+    X8 -> X9
+    X3 -> X8
+}')
+
+dseparated(gb, "X2", "X9", c("X4"))
+dseparated(gb, "X7", "X5", c("X3", "X8"))
+dseparated(gb, c("X2", "X4"), "X7", c("X6", "X9", "X10"))
+```
+# Problem 2
+
+# Problem 3
+Agreements: $D \indep \{A,C\}|B$  
+Disagreements: $A \indep C|\phi$ (a), $C \indep \{A,D\}|B$ (b)
+
+# Problem 4
+(a) b, e
+
+(b) An unshielded collider in a DAG will violate the Markov equivalence with respect to the chain DAG. Taken this into account, we can consider two cases that will be Markov equivalent to the chain DAG:  
+1.Flip all the arrows to left  
+2.For $X_i (i=2, 3, ..., p-1)$, flip all the arrows to left before $X_i$  
+There are p-2 possible $X_i$s that can be the pivot of the arrows. Therefore, $p-2+1=p-1$ DAGs are Markov equivalent to the chain DAG. 
+
+# Problem 5
+(a)
+```{r results=T, echo=F}
+# problem 5
+library(dagitty)
+
+# construct fig 5 DAG
+g <- dagitty('dag {
+    D [pos="0,0"]
+    E [pos="1,0"]
+    C [pos="1,-1"]
+    A [pos="2,0"]
+    B [pos="3,0"]
+    F [pos="4,0"]
+    G [pos="4,-1"]
+    H [pos="5,-1"]
+    
+    D -> E -> A <- B <- G -> H
+    C -> E
+    E -> F -> G
+    C -> H
+    C -> B
+    C -> F
+}')
+
+# a: path from C to H
+paths(g, "C", "H")
+```
+
+(b)
+```{r message=T, echo=F}
+# b: d-separation between E and G given A and B
+if(dseparated(g, "E", "G", c("A", "B"))){
+  message("E"," and ", "G"," are d-separated given A and B.")
+} else {
+  message("E"," and ", "G", " are not d-separated given A and B.")
+}
+```
+
+(c)
+```{r results=T, echo=F}
+# c: list the conditional independencies relationships implied by the model
+impliedConditionalIndependencies(g)
+```
+
+With the option “type = all.pairs”:
+```{r results=T, echo=F}
+impliedConditionalIndependencies(g, type = "all.pairs")
+```
+According to the documentation, the default for this function is type = "missing.edge". This returns a list of conditional independencies with minimal testable implication per missing edge while type = "all.pairs" returns all implied conditional independencies between two variables. This is why the first one is shorter than the second one.
+
+(d)
+```{r results=T, echo=F}
+# d: simulate data from this DAG, which associates the DAG with a linear structural equation model
+# path coefficient (-0.7, 0.7), sample size = 10000
+sim <- simulateSEM(
+  g,
+  b.default = NULL,
+  b.lower = -0.7,
+  b.upper = 0.7,
+  N = 10000
+)
+```
+
+# Code
+```{r echo=T, results=F, message=F}
+# problem 5
+library(dagitty)
+
+# construct fig 5 DAG
+g <- dagitty('dag {
+    D [pos="0,0"]
+    E [pos="1,0"]
+    C [pos="1,-1"]
+    A [pos="2,0"]
+    B [pos="3,0"]
+    F [pos="4,0"]
+    G [pos="4,-1"]
+    H [pos="5,-1"]
+    
+    D -> E -> A <- B <- G -> H
+    C -> E
+    E -> F -> G
+    C -> H
+    C -> B
+    C -> F
+}')
+
+# a: path from C to H
+paths(g, "C", "H")
+
+# b: d-separation between E and G given A and B
+if(dseparated(g, "E", "G", c("A", "B"))){
+  message("E"," and ", "G"," are d-separated given A and B.")
+} else {
+  message("E"," and ", "G", " are not d-separated given A and B.")
+}
+
+# c: list the conditional independencies relationships implied by the model
+impliedConditionalIndependencies(g)
+impliedConditionalIndependencies(g, type = "all.pairs")
+
+# d: simulate data from this DAG, which associates the DAG with a linear structural equation model
+# path coefficient (-0.7, 0.7), sample size = 10000
+sim <- simulateSEM(
+  g,
+  b.default = NULL,
+  b.lower = -0.7,
+  b.upper = 0.7,
+  N = 10000
+)
+```
+
