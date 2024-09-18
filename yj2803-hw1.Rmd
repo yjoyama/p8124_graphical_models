@@ -70,7 +70,8 @@ Agreements: $D \indep \{A,C\}|B$
 Disagreements: $A \indep C|\phi$ (a), $C \indep \{A,D\}|B$ (b)
 
 # Problem 4
-(a) b, e
+(a) Unshielded colliders in Figure 3: $C\rightarrow E \leftarrow A$, $C\rightarrow B \leftarrow A$, $D\rightarrow E \leftarrow B$  
+No DAGs in the option matches these three structures. 
 
 (b) An unshielded collider in a DAG will violate the Markov equivalence with respect to the chain DAG. Taken this into account, we can consider two cases that will be Markov equivalent to the chain DAG:  
 1.Flip all the arrows to left  
