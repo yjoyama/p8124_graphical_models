@@ -24,7 +24,7 @@ theme_set(
 ```
 
 # Problem 1
-(a) $X_2 \indep X_3, X_7, X_8, X_{10}$  
+(a) $X_2 \indep X_3, X_7, X_8, X_9, X_{10}|X_1$  
 $X_3 \indep X_2|X_1$  
 $X_4 \indep X_1, X_7, X_8, X_{10}|X_2, X_3$  
 $X_5 \indep X_1, X_2, X_3, X_7, X_8, X_9, X_{10}|X_4$  
