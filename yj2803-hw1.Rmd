@@ -15,12 +15,6 @@ knitr::opts_chunk$set(echo = T, message = F, warning = F)
 library(tidyverse)
 library(ggplot2)
 library(dagitty)
-
-# setup plot theme
-theme_set(
-  theme_bw() +
-    theme(legend.position = "top")
-  )
 ```
 
 # Problem 1
@@ -34,9 +28,9 @@ $X_8 \indep X_1, X_2, X_4, X_5, X_6|X_3, X_7$
 $X_9 \indep X_1, X_2, X_3, X_5, X_6, X_7|X_4, X_8, X_{10}$  
 $X_{10} \indep X_1, X_2, X_3, X_4, X_5, X_6, X_7|X_8$  
 
-(b) $X_2 \perp_dX_9|X_4$: False   
-$X_7 \perp_dX_5|\{X_3, X_8\}$: True  
-$\{X_2, X_4\} \perp_dX_7|\{X_6, X_9, X_{10}\}$: False
+(b) $X_2 \perp_dX_9|X_4$: False. $X_4$ is a collider and it is in the conditioning set so the path is active.    
+$X_7 \perp_dX_5|\{X_3, X_8\}$: True. $X_4$ is a collider and it is not in the conditioning set so the path is non-active. And $X_9$ is a collider and also not in the conditioning set so the path is non-active. There is no active path between $X_7$ and $X_5$.    
+$\{X_2, X_4\} \perp_dX_7|\{X_6, X_9, X_{10}\}$: False. $X_9$ is a collider and it is in the conditioning set so the path is active. 
 ```{r echo=F, results=F}
 gb <- dagitty('dag {
     X1 [pos="0,0"]
@@ -56,7 +50,6 @@ gb <- dagitty('dag {
     X8 -> X9
     X3 -> X8
 }')
-
 dseparated(gb, "X2", "X9", c("X4"))
 dseparated(gb, "X7", "X5", c("X3", "X8"))
 dseparated(gb, c("X2", "X4"), "X7", c("X6", "X9", "X10"))
