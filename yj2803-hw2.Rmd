@@ -32,11 +32,11 @@ This is the pairwise Markov property. Therefore, we can conclude that local Mark
 ![Moralized graph](hw2_p2.png){width=300px}  
 
 (a) When factorizing by maximal clique, the joint distribution can be written as:    
-$p(x)=\frac{1}{Z}\phi_{123}(x_1, x_2, x_3)\phi_{234}(x_2, x_3, x_4)\phi_{378}(x_3, x_7, x_8)\phi_{348}(x_3, x_4, x_8)\phi_{489}(x_4, x_8, x_9)\phi_{234}(x_8, x_9, x_{10})$  
-$\phi_{45}(x_4, x_5)\phi_{56}(x_5, x_6)$  
-There are 8 factor potentials. 
+$p(x)=\frac{1}{Z}\phi_{489(10)}(x_4, x_8, x_9, x_{10})\phi_{123}(x_1, x_2, x_3)\phi_{234}(x_2, x_3, x_4)\phi_{378}(x_3, x_7, x_8)\phi_{348}(x_3, x_4, x_8)\phi_{45}(x_4, x_5)\phi_{56}(x_5, x_6)$  
+There are 7 factor potentials. 
 
-(b) When the scope has 3 variables, there are 3 parameters for each variable, 3 parameters for pairs, and 1 parameter for three-way interaction. When the scope has two variables, there are 2 parameters for single variable and 1 parameters for pairs. From (a), we have 6 scopes with 3 variables and 2 scopes with 2 variables. Therefore, there are $(3+3+1)\times6+(2+1)\times2=48$ variables in total.
+(b) When the scope has 4 variables, there are 4 parameters for each variable, 6 parameters for pairs, and 4 parameter for three-way interaction. When the scope has 3 variables, there are 3 parameters for each variable, 3 parameters for pairs, and 1 parameter for three-way interaction. When the scope has two variables, there are 2 parameters for single variable and 1 parameters for pairs. From (a), we have 1 scope with 4 variables, 4 scopes with 3 variables and 2 scopes with 2 variables. We need to exclude the duplicates ($\{2\}\times1$, $\{3\}\times3$, $\{4\}\times3$, $\{5\}\times1$, $\{8\}\times2$, $\{2,3\}\times1$, $\{3,4\}\times1$, $\{3,8\}\times1$, $\{4,8\}\times1$).  
+Therefore, there are $(4+6+4+1)\times1+(3+3+1)\times4+(2+1)\times2-14=35$ variables in total.
 
 (c) There are 10 variables and each can take on either 0 or 1, so there are $2^{10}=1024$ possible combinations. The joint distribution must sum to 1, and the last one will be determined automatically when all the other 9 variable are set. So $2^{10}-1=1023$ parameters would be required.   
 
