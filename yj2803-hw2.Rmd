@@ -1,5 +1,5 @@
 ---
-title: "Assig"
+title: "Assignment2"
 author: "Yuki Joyama (yj2803)"
 output: 
   pdf_document:
@@ -25,5 +25,24 @@ $\Rightarrow X_i \indep X_j|Ne(X_i,\mathcal{G})\cup (X\backslash Cl(X_i,\mathcal
 $\Rightarrow X_i \indep X_j|Ne(X_i,\mathcal{G})\cup (X\backslash Ne(X_i,\mathcal{G})\cup X_i \cup X_j)$  
 $\Rightarrow X_i \indep X_j|X\backslash (X_i \cup X_j)$  $\Rightarrow X_i \indep X_j|X\backslash \{X_i,X_j\})$  
 This is the pairwise Markov property. Therefore, we can conclude that local Markov property $\Rightarrow$ pairwise Markov property in undirected graph $\mathcal{G}$.
+
+# Problem 2
+![Moralized graph](hw2_p2.png){width=300px}  
+
+(a) When factorizing by maximal clique, the joint distribution can be written as:    
+$p(x)=\frac{1}{Z}\phi_{123}(x_1, x_2, x_3)\phi_{234}(x_2, x_3, x_4)\phi_{378}(x_3, x_7, x_8)\phi_{348}(x_3, x_4, x_8)\phi_{489}(x_4, x_8, x_9)\phi_{234}(x_8, x_9, x_{10})$  
+$\phi_{45}(x_4, x_5)\phi_{56}(x_5, x_6)$  
+There are 8 factor potentials. 
+
+(b) When the scope has 3 variables, there are 3 parameters for each variable, 3 parameters for pairs, and 1 parameter for three-way interaction. When the scope has two variables, there are 2 parameters for single variable and 1 parameters for pairs. From (a), we have 6 scopes with 3 variables and 2 scopes with 2 variables. Therefore, there are $(3+3+1)\times6+(2+1)\times2=48$ variables in total.
+
+(c) There are 10 variables and each can take on either 0 or 1, so there are $2^{10}=1024$ possible combinations. The joint distribution must sum to 1, and the last one will be determined automatically when all the other 9 variable are set. So $2^{10}-1=1023$ parameters would be required.   
+
+(d) Factorization property in DAG $\mathcal{G}$:    
+$p(x_1, x_2, ..., x_{10}) = \prod_{i=1}^{10} p(x_i \mid Pa(X_i, \mathcal{G}))$  
+=$p(x_1)p(x_2|x_1)p(x_3|x_1)p(x_4|x_2, x_3)p(x_5|x_4)p(x_6|x_5)p(x_7|x_3)p(x_8|x_3,x_7)p(x_9|x_4,x_8,x_{10})p(x_{10}|x_8)$
+When $x_i=1$, the probability can be written as $p(x_i=1|Pa(X_i,\mathcal{G}))$. The probability where $x_i=0$ can be obtained by $1-p(x_i=1|Pa(X_i,\mathcal{G}))$ so we can focus on the combination of the parents. 
+By the above factorization formula, the required number of parameters are $2^0+2^1+2^1+2^2+2^1+2^1+2^1+2^2+2^3+2^1=29$.
+
 
 
