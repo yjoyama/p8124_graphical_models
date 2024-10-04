@@ -1,6 +1,6 @@
 ---
-title: "Homework2"
-author: "Yuki Joyama"
+title: "Assig"
+author: "Yuki Joyama (yj2803)"
 output: 
   pdf_document:
     latex_engine: xelatex
@@ -18,3 +18,12 @@ library(dagitty)
 ```
 
 # Problem 1
+Given the local Markov property for UGs,  
+$X_i \indep X \backslash Cl(X_i,\mathcal{G})|Ne(X_i,\mathcal{G})$ and $X_i\not\sim X_j$  
+$\Rightarrow X_i \indep X_j \cup (X\backslash Cl(X_i,\mathcal{G})\cup X_j)|Ne(X_i,\mathcal{G})$  
+$\Rightarrow X_i \indep X_j|Ne(X_i,\mathcal{G})\cup (X\backslash Cl(X_i,\mathcal{G})\cup X_j)$ (by weak union)  
+$\Rightarrow X_i \indep X_j|Ne(X_i,\mathcal{G})\cup (X\backslash Ne(X_i,\mathcal{G})\cup X_i \cup X_j)$  
+$\Rightarrow X_i \indep X_j|X\backslash (X_i \cup X_j)$  $\Rightarrow X_i \indep X_j|X\backslash \{X_i,X_j\})$  
+This is the pairwise Markov property. Therefore, we can conclude that local Markov property $\Rightarrow$ pairwise Markov property in undirected graph $\mathcal{G}$.
+
+
