@@ -16,5 +16,63 @@ knitr::opts_chunk$set(echo = T, message = F, warning = F)
 
 library(tidyverse)
 library(ggplot2)
-library(dagitty)
+library(MASS)
 ```
+
+# Problem 1
+
+# Problem 2
+```{r}
+# simulate data from a given MRF independence model
+set.seed(123)
+K <- cbind(c(10,7,7,0),c(7,20,0,7),c(7,0,30,7),c(0,7,7,40))
+data <- as.data.frame(mvrnorm(n=10000,mu=c(0,0,0,0),Sigma=solve(K)))
+colnames(data) <- c("X1","X2","X3","X4")
+```
+
+
+
+```{r}
+# fit the model (estimate the precision matrix subject to the graph constraints)
+library(gRim)
+# glist <- list()
+# ddd <- cov.wt(data, method="ML")
+# fit <- ggmfit(ddd$cov, ddd$n.obs, glist) # Estimate parameters using IPF
+# fit$K # estimated precision matrix
+
+```
+
+# Problem 3
+```{r}
+# Gaussian Bayesian Network model
+# covariance matrix
+set.seed(123)
+Sig <- cbind(c(3,-1.4,0,0),c(-1.4,3,1.4,1.4),c(0,1.4,3,0),c(0,1.4,0,3))
+data <- as.data.frame(mvrnorm(n=10000,mu=c(0,0,0,0),Sigma=Sig))
+colnames(data) <- c("X1","X2","X3","X4")
+```
+DAG $\mathcal{G}$: $X_1\rightarrow X_2\leftarrow X_3$ and $X_4\rightarrow X_2$
+
+(a)  
+
+(b)
+
+(c)
+
+
+# Problem 4
+```{r}
+library(dagitty)
+
+# simulate 10000 observations from the following graph
+g <- dagitty( "dag{ x <- u1; u1 -> m <- u2 ; u2 -> y }" )
+```
+
+
+
+# Problem 5
+![](hw3_p5.png){width=300px}  
+
+
+
+
