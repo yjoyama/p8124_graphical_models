@@ -1,0 +1,20 @@
+---
+title: "Assignment3"
+author: "Yuki Joyama (yj2803)"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{amsmath}  # Include amsmath package
+  - \newcommand{\indep}{\perp\!\!\!\perp}
+  - \usepackage{setspace}
+  - \setstretch{1.2}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, message = F, warning = F)
+
+library(tidyverse)
+library(ggplot2)
+library(dagitty)
+```
