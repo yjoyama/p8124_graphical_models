@@ -21,6 +21,8 @@ library(MASS)
 
 # Problem 1
 
+
+
 # Problem 2
 ```{r}
 # simulate data from a given MRF independence model
@@ -28,19 +30,47 @@ set.seed(123)
 K <- cbind(c(10,7,7,0),c(7,20,0,7),c(7,0,30,7),c(0,7,7,40))
 data <- as.data.frame(mvrnorm(n=10000,mu=c(0,0,0,0),Sigma=solve(K)))
 colnames(data) <- c("X1","X2","X3","X4")
+K
 ```
 
+In the precision matrix, $K_{ij}=0$ implies that variable $X_i$ and $X_j$ are conditionally independent given all other variables. Given the precision matrix K, $K_{14}=K_{41}=0$ and $K_{23}=K_{32}=0$. Therefore the following conditional independencies are represented by $K$:  
+$X_1\indep X_4|{X\backslash \{X_1,X_4\}}$  
+$X_2\indep X_3|{X\backslash \{X_2,X_3\}}$
+The corresponding graph is an undirected graph that has no edges between $X_1$ and $X_4$, and $X_2$ and $X_3$. All other pairs of variables are connected by edges.  
+Now, I will verify the conditional independence constraints by using linear regression.   
+$X_1\indep X_4|{X\backslash \{X_1,X_4\}}$:  
+```{r}
+# conditional independence of X1 and X4 given X2, X3
+m14 = lm(X1 ~ X2 + X3 + X4, data = data)
+summary(m14)
+```
+In this linear model, the coefficient of $X4$ turned out to be non-significant with p-value <0.05. 
 
+$X_2\indep X_3|{X\backslash \{X_2,X_3\}}$:  
+```{r}
+# conditional independence of X2 and X3 given X1, X4
+m23 = lm(X2 ~ X1 + X3 + X4, data = data)
+summary(m23)
+```
+In this linear model, the coefficient of $X3$ turned out to be non-significant with p-value <0.05. 
 
+Therefore, the conditional independencies are verified. 
+
+The list of edges are $X_1-X_2$, $X_1-X_3$, $X_2-X_4$, $X_3-X_4$.
 ```{r}
 # fit the model (estimate the precision matrix subject to the graph constraints)
 library(gRim)
-# glist <- list()
-# ddd <- cov.wt(data, method="ML")
-# fit <- ggmfit(ddd$cov, ddd$n.obs, glist) # Estimate parameters using IPF
-# fit$K # estimated precision matrix
-
+glist <- list(
+  c("X1", "X2"),
+  c("X1", "X3"),
+  c("X2", "X4"),
+  c("X3", "X4")
+)
+ddd <- cov.wt(data, method="ML")
+fit <- ggmfit(ddd$cov, ddd$n.obs, glist) # Estimate parameters using IPF
+fit$K # estimated precision matrix
 ```
+It appears that the model fitting worked because we can see that the estimated precision matrix has $K_{14}=K_{41}=0$ and $K_{23}=K_{32}=0$, and everything else non-zero, indicating that the above conditional independencies hold.
 
 # Problem 3
 ```{r}
