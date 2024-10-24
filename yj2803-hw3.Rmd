@@ -52,7 +52,7 @@ $X_1\indep X_4|{X\backslash \{X_1,X_4\}}$:
 m14 = lm(X1 ~ X2 + X3 + X4, data = data)
 summary(m14)
 ```
-In this linear model, the coefficient of $X4$ turned out to be non-significant with p-value <0.05. 
+In this linear model, the coefficient of $X4$ turned out to be non-significant with p-value >0.05. 
 
 $X_2\indep X_3|{X\backslash \{X_2,X_3\}}$:  
 ```{r}
@@ -60,7 +60,7 @@ $X_2\indep X_3|{X\backslash \{X_2,X_3\}}$:
 m23 = lm(X2 ~ X1 + X3 + X4, data = data)
 summary(m23)
 ```
-In this linear model, the coefficient of $X3$ turned out to be non-significant with p-value <0.05. 
+In this linear model, the coefficient of $X3$ turned out to be non-significant with p-value >0.05. 
 
 Therefore, the conditional independencies are verified. 
 
