@@ -17,6 +17,7 @@ knitr::opts_chunk$set(echo = T, message = F, warning = F)
 library(tidyverse)
 library(ggplot2)
 library(MASS)
+library(gRim)
 ```
 
 # Problem 1
@@ -66,7 +67,6 @@ Therefore, the conditional independencies are verified.
 The list of edges are $X_1-X_2$, $X_1-X_3$, $X_2-X_4$, $X_3-X_4$.
 ```{r}
 # fit the model (estimate the precision matrix subject to the graph constraints)
-library(gRim)
 glist <- list(
   c("X1", "X2"),
   c("X1", "X3"),
@@ -104,17 +104,33 @@ We can see that the correlation between $X_1$ and $X_3$, $X_1$ and $X_4$, $X_3$ 
 
 (b)   
 ![](hw3_p3.jpeg){width=300px}   
-The precision matrix $K$ for $\mathcal{G}^m$ is 4 by 4 matrix with non-zero off-diagonal elements because all the pairs in the moralized graph are connected by edges. Additionally, K indicates that 
+The precision matrix $K$ for $\mathcal{G}^m$ is 4 by 4 matrix with non-zero off-diagonal elements because all the pairs in the moralized graph are connected by edges. This indicates that all the pairs are conditionally dependent given the rest of other variables, meaning that they have non-zero partial correlations.  
+Even though the covariance matrix $\Sigma$ shows zero direct covariances between some pairs of variables, the precision matrix $K$ reflects the conditional dependencies imposed by the moralized graph $\mathcal{G}^m$ where all pairs of variables are connected.
 
-(c)
+(c) 
+```{r}
+# estimate precision matrix K
+estK = ggmfit(cov(data), 10000, glist = glist)$K
 
+# output estimated K
+estK
+
+# take the inverse of K
+solve(estK)
+
+# output the true covariance matrix
+Sig
+```
+
+The estimated covariance matrix is mostly similar to true covariance matrix but differ slightly on $X_2$ and $X_3$, and  $X_1$ and $X_4$.
 
 # Problem 4
-```{r}
+```{r fig.width=3, fig.height=2}
 library(dagitty)
 
 # simulate 10000 observations from the following graph
 g <- dagitty( "dag{ x <- u1; u1 -> m <- u2 ; u2 -> y }" )
+plot(g)
 ```
 
 
