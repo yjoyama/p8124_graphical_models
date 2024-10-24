@@ -110,7 +110,7 @@ Even though the covariance matrix $\Sigma$ shows zero direct covariances between
 (c) 
 ```{r}
 # estimate precision matrix K
-estK = ggmfit(cov(data), 10000, glist = glist)$K
+estK = ggmfit(cov.wt(data, method = "ML")$cov, cov.wt(data, method = "ML")$n.obs, glist = glist)$K
 
 # output estimated K
 estK
@@ -131,9 +131,46 @@ library(dagitty)
 # simulate 10000 observations from the following graph
 g <- dagitty( "dag{ x <- u1; u1 -> m <- u2 ; u2 -> y }" )
 plot(g)
+
+# simulate data based on the DAG
+set.seed(123)
+n = 10000
+u1 = rnorm(n)  
+u2 = rnorm(n)  
+x = u1 + rnorm(n)            
+m = u1 + u2 + rnorm(n)  
+y = u2 + rnorm(n) 
+
+data <- data.frame(x = x, m = m, y = y)
+
+# estimate the effect of x on y adjusting for m in a linear regression
+m1 = lm(y ~ x + m, data = data)
+summary(m1)
+
+# 95% CI for the effect of x on y adjusting for m
+confint(m1, "x", level = 0.95)
 ```
 
+The estimate of X on Y adjusted for M is -0.19 with a 95% CI of (-0.21, -0.17), which is statistically significant.  
 
+```{r}
+# identify the sufficient adjustment set from dagitty
+adjustmentSets(g, exposure = "x", outcome = "y")
+```
+
+The empty set was returned, which makes sense because M is a collider in the path X to Y and should not be adjusted.    
+The new estimate and 95% CI can be obtained by the following:
+```{r}
+# estimate the effect of x on y adjusting for nothing in a linear regression
+m2 = lm(y ~ x, data = data)
+summary(m2)
+
+# 95% CI for the effect of x on y adjusting for nothing
+confint(m2, "x", level = 0.95)
+```
+
+The estimate of X on Y adjusted for nothing is 0.006 with a 95% CI of (-0.013, 0.025), which is not statistically significant.  
+The first case implies that there is a causal effect of X on Y, and the second case implies the opposite. According to the DAG, adjusting for notation would be more appropriate when examining the effect of X on Y, and we confirmed that X has no causal effect on Y from the linear regression. The first case tells us that misadjustment can potentially create a non-existent causal effect between two variables and should be evaluated cautiously. 
 
 # Problem 5
 ![](hw3_p5.png){width=300px}  
