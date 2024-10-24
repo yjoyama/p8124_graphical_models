@@ -20,8 +20,15 @@ library(MASS)
 ```
 
 # Problem 1
-
-
+$X\sim N(\mu, \Sigma)$ where $X=(X_1,...X_p)$  
+The conditional distribution $X_i, X_j|X_s =x_s$ is still a Gaussian distribution with mean and covariance given by: $X_i, X_j|X_s =x_s\sim N(\mu_{ij|S},\Sigma_{ij|S})$  
+ 
+$\left( \Sigma_{\{ijS\},\{ijS\}} \right)^{-1} = \begin{pmatrix}K_{\{i,j\},\{i,j\}} & K_{\{i,j\},S} \\K_{S,\{i,j\}} & K_S\end{pmatrix}$  
+When $X_i \indep X_j|X_s$ is true, $K_{ij|S}=0$, which makes $\left( \Sigma_{\{ijS\},\{ijS\}} \right)^{-1}$ diagonal. Therefore, 
+$X_i \indep X_j|X_s \Rightarrow (\Sigma_{\{ijS\},\{ijS\}})^{-1}_{ij}=0$ holds.  
+When $(\Sigma_{\{ijS\},\{ijS\}})^{-1}_{ij}=0$ is true, $K_{ij|S}=(\Sigma_{ij|S})^{-1}=0$. 
+$(\Sigma_{ij|S})^{-1}$ is the precision matrix for the conditional distribution $X_i, X_j|X_s =x_s$, so $X_i$ and $X_j$ are independent given $X_s$.  
+Therefore, $X_i \indep X_j|X_s \Leftrightarrow (\Sigma_{\{ijS\},\{ijS\}})^{-1}_{ij}=0$.
 
 # Problem 2
 ```{r}
@@ -84,8 +91,20 @@ colnames(data) <- c("X1","X2","X3","X4")
 DAG $\mathcal{G}$: $X_1\rightarrow X_2\leftarrow X_3$ and $X_4\rightarrow X_2$
 
 (a)  
+Given the model, correlation constraints are:  
+$X_1\indep X_3|X_2$  
+$X_1\indep X_4|X_2$  
+$X_3\indep X_4|X_2$  
 
-(b)
+```{r}
+# estimate the correlation 
+cor(data)
+```
+We can see that the correlation between $X_1$ and $X_3$, $X_1$ and $X_4$, $X_3$ and $X_4$ are very close to zero.
+
+(b)   
+![](hw3_p3.jpeg){width=300px}   
+The precision matrix $K$ for $\mathcal{G}^m$ is 4 by 4 matrix with non-zero off-diagonal elements because all the pairs in the moralized graph are connected by edges. Additionally, K indicates that 
 
 (c)
 
