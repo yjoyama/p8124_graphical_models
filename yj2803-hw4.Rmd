@@ -128,12 +128,43 @@ The optimal $\alpha=0.008$ was selected as the value minimizing BIC. This model 
 
 Estimated CPDAGs were plotted for specific $\alpha$ values (0.001, 0.008, 0.1), and the number of edges was examined for each plot. We see that the smaller $\alpha$ value led to sparser graph with fewer edges, and the larger $\alpha$ value led to denser graphs with more edges. 
 
+## Graphical lasso method
+I will conduct model selection using EBIC, RIC and StARS.
+```{r}
+# Apply graphical lasso method
+out.glasso <- huge(as.matrix(data), method = "glasso")
 
+# Perform model selection using EBIC
+out.select <- huge.select(out.glasso, criterion = "ebic")
 
+# Plot the selected graph
+plot(out.glasso)
 
+# Extract adjacency matrix of the selected graph
+adj_matrix <- out.select$refit
 
+# Check selected lambda
+out.select$opt.lambda
 
+# Visualize the selected graph
+huge.plot(adj_matrix)
 
+# Do the same using RIC
+out.select <- huge.select(out.glasso, criterion = "ric")
+plot(out.glasso)
+adj_matrix <- out.select$refit
+out.select$opt.lambda
+huge.plot(adj_matrix)
+
+# Do the same using STARS
+out.select <- huge.select(out.glasso, criterion = "stars")
+plot(out.glasso)
+adj_matrix <- out.select$refit
+out.select$opt.lambda
+huge.plot(adj_matrix)
+```
+
+First, I estimated a sequence of graphs corresponding to different regularization parameters ($\lambda$). Larger $\lambda$ values produced sparser graphs with many isolated edges, while smaller $\lambda$ values led to highly connected graphs. Subsequently, three model selection criteria were applied to identify the optimal graph that balances fit and sparsity. EBIC balances log-likelihood and penalizes model complexity in high-dimensional data ($\lambda = 0.0884$). RIC uses a simpler penalty that generally favors fewer edges, resulting in a moderate sparsity ($\lambda = 0.4997$). StARS prioritizes the stability of edges across subsampled data ($\lambda = 0.1904$). We need to choose the criteria based on the nature of data and underlying relationships in the data. 
 
 
 
