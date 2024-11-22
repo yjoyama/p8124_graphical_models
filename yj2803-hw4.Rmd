@@ -21,7 +21,24 @@ library(huge)
 ```
 
 # Problem 1
+$X_i=\sum_{X_j\in Pa(X_i,\mathcal{G})}\beta_jX_j+e_i$  
+Given figure 1 where all variables are jointly Gaussian, we can describe $X_1$ and $X_2$ using the linear function:    
+$X_1=\beta L_1+e_1$    
+$X_2=\alpha X_1 + \gamma L_1 + e_2=(\alpha\beta+\gamma)L_1+\alpha e_1+e_2$  
+Where  
+- $L_1$ is the common cause with variance $\sigma^2_{L_1}$  
+- $e_1$ and $e_2$ are independent error term with variances $\sigma^2_1$ and $\sigma^2_2$, respectively  
+- $L_1, e_1,e_2$ are independent
 
+Now, $Cov(X_1, X_2)=Cov(X_1, (\alpha\beta+\gamma)L_1+\alpha e_1+e_2)$  
+$=Cov(X_1, (\alpha\beta+\gamma)L_1)+Cov(X_1, \alpha e_1)+ Cov(X_1, e_2)$  
+$=Cov(\beta L_1+e_1, (\alpha\beta+\gamma)L_1)=\beta(\alpha\beta+\gamma)Var(L_1)$  
+$=\beta(\alpha\beta+\gamma)\sigma^2_{L_1}$  
+
+For fixed $\alpha$, this can take any real value by some setting of the parameters $\beta$ and $\gamma$.   
+Similarly, by $Corr(X_1,X_2)=\frac{Cov(X_1, X_2)}{\sqrt{Var(X_1)\times Var(X_2)}}$ ($Var(X_1)>0\text{ and } Var(X_2)>0$), the correlation between $X_1$ and $X_2$ can also take any value by specifying $\beta$ and $\gamma$.  
+
+$L_1$ plays an important role in driving the observed relationship between $X_1$ and $X_2$ by introducing a backdoor pathway that can explain part or all of their covariance. If $L_1$ is omitted, the observed covariance might be misinterpreted as evidence of a direct effect ($\alpha$), when in reality, it arises from $L_1$. Moreover, the ability of $\beta$ and $\gamma$ to generate any covariance value highlights how $L_1$ can mask or amplify the true causal relationship between $X_1$ and $X_2$, demonstrating the significant power of $L_1$ in shaping their observed association.
 
 
 # Problem 2
