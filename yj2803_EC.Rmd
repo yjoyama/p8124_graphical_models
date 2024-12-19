@@ -16,4 +16,69 @@ knitr::opts_chunk$set(echo = T, message = F, warning = F)
 
 library(tidyverse)
 library(ggplot2)
+library(rstan)
 ```
+
+```{r}
+# import data
+data <- read.table("hw4_data_prob3.txt", header = TRUE)
+
+# check histograms
+par(mfrow = c(2, 2))  
+for (i in 1:4) {
+  hist(data[[i]], main = paste("y", i), xlab = paste("y", i), breaks = 30)
+}
+par(mfrow = c(1, 1))
+
+# data cleaning for stan
+stan_data <- list(
+  N = nrow(data),
+  D = ncol(data),
+  K = 3,  
+  y = as.matrix(data)
+)
+
+# compile the stan model
+stan_model <- stan_model("mixture_model.stan")
+
+# fit the model
+fit <- sampling(
+  stan_model, 
+  data = stan_data, 
+  iter = 1000, 
+  chains = 4, 
+  control = list(adapt_delta = 0.99, max_treedepth = 20)
+)
+
+# summary of posterior distribution of parameters:
+print(fit)
+
+# traceplots
+traceplot(fit)
+```
+
+# Variational Bayes
+
+```{r}
+# VB works
+vb_fit <-
+  vb(
+    stan_model,
+    data = stan_data,
+    iter = 1000,
+    elbo_samples = 500,
+    algorithm = c("fullrank"),
+    output_samples = 1000,
+    tol_rel_obj = 0.00001
+  )
+
+# vb esitmates
+print(vb_fit)
+
+# get estimated and generating values for wanted parameters
+pars <- vb_fit %>% names %>% `[`(1:10) %>% sort()
+sim_summary <- as.data.frame(summary(vb_fit)[[1]])
+estimated_values <- sim_summary[pars, c("mean", "2.5%", "97.5%")]
+rstan::traceplot(vb_fit)
+```
+
