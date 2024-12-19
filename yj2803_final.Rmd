@@ -13,9 +13,65 @@ header-includes:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = T, message = F, warning = F)
-
-library(tidyverse)
-library(ggplot2)
+library(igraph)
+library(bnlearn)
 library(pcalg)
-library(huge)
+library(ggplot2)
+library(tidyverse)
 ```
+
+```{r}
+# import data
+file_list <- list.files(path = "./final project/data", pattern = "\\.csv$", full.names = TRUE)
+
+data_list <- lapply(file_list, function(file) {
+  # Read the file as a tab-delimited file
+  df <- read.table(file, sep = "\t", header = FALSE)
+  return(df)
+})
+
+metadata <- read.csv("./final project/data/phenotypic_CMU.csv")
+
+cleaned_data <- lapply(data_list, function(df) {
+  df <- df[, 1:160]  # Remove extra ROI
+  scale(df)          # Standardize time series
+})
+
+# Add metadata for diagnostic category (ASD/control)
+metadata$ID <- gsub("\\.csv$", "", basename(file_list))
+
+# Remove the Extra Column
+cleaned_data <- lapply(data_list, function(df) {
+  df <- df[, 1:160]  # Keep only the first 160 columns
+  scale(df)          # Standardize the time series
+})
+
+lapply(cleaned_data, function(df) ncol(df))  # All should now have 160 columns
+head(cleaned_data[[1]])                     # Preview the first dataset
+
+combined_data <- do.call(rbind, cleaned_data)
+```
+
+```{r}
+# Visualize Patterns
+plot(cleaned_data[[1]][, 1], type = "l", main = "First Column (V1)", ylab = "Standardized Value", xlab = "Observations")
+
+# Functional Connectivity (e.g., Correlation Matrix): Calculate a correlation matrix to study relationships between ROI time series
+correlation_matrix <- cor(cleaned_data[[1]])  # For the first dataset
+image(correlation_matrix, main = "Correlation Matrix", xlab = "ROIs", ylab = "ROIs")
+
+# Cluster Analysis (e.g., Hierarchical Clustering): Perform clustering to identify patterns across ROIs
+dist_matrix <- dist(t(cleaned_data[[1]]))  # Transpose for clustering ROIs
+hc <- hclust(dist_matrix)
+plot(hc, main = "Hierarchical Clustering of ROIs", xlab = "ROIs")
+
+# Principal Component Analysis (PCA): Reduce dimensionality and visualize key components
+pca_result <- prcomp(cleaned_data[[1]])
+plot(pca_result$x[, 1:2], main = "PCA: First Two Components", xlab = "PC1", ylab = "PC2")
+
+# Graph analysis: Convert the correlation matrix to a graph structure for advanced connectivity analysis
+library(igraph)
+graph_data <- graph_from_adjacency_matrix(correlation_matrix > 0.5, mode = "undirected")
+plot(graph_data, main = "ROI Connectivity Graph")
+```
+
